@@ -1,8 +1,14 @@
 <template>
     <div class="track" @click="playTrack">
         <div class="name">{{name}}</div>
-        <div class="art" :style="backgroundImage"></div>
-        <audio class="player" controls preload="metadata" :src="audio"></audio>
+        <div class="art" :style="artStyle"></div>
+        <audio 
+            class="player" 
+            controls 
+            preload="metadata" 
+            :src="audio" 
+            @ended="$emit('may-i-play', $el.nextSibling)">
+        </audio>
     </div>
 </template>
 
@@ -16,7 +22,7 @@ export default {
     },
     data() {
         return {
-            backgroundImage: `url(${this.art})`
+            artStyle: {backgroundImage: `url(${this.art})`}
         }
     },
     methods: {
@@ -58,6 +64,8 @@ export default {
         }
 
         &.playing {
+            background-color: rgba(21, 21, 43, 0.9);
+            color: white;
             position: sticky;
             top: 0;
             z-index: 1;
@@ -66,6 +74,10 @@ export default {
 
     .name {
         text-align: left;
+
+        .playing & {
+            font-weight: bold;
+        }
     }
 
     .player {
@@ -78,6 +90,7 @@ export default {
 
         .playing & {
             display: block;
+            background: #f2f2f2;
         }
 
         &:focus {

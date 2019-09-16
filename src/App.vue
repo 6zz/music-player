@@ -24,13 +24,15 @@ export default {
         track.classList.remove('playing');
         track.querySelector('.player').pause()
       })
-      el.classList.add('playing')
-      const audio = el.querySelector('.player')
-      audio.addEventListener('ended', () => {
-        el.classList.remove('playing')
-        this.stopNPlay(el.nextSibling)
-      })
-      audio.play()
+      if (el) {
+        el.classList.add('playing')
+        const audio = el.querySelector('.player')
+        audio.play()
+        el.scrollIntoView({
+          block: 'start',
+          behavior: 'smooth'
+        })
+      }
     }
   }
 }
