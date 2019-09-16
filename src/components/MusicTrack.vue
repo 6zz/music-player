@@ -2,7 +2,7 @@
     <div class="track" @click="playTrack">
         <div class="name">{{name}}</div>
         <div class="art" :style="backgroundImage"></div>
-        <audio class="player" controls :src="audio"></audio>
+        <audio class="player" controls preload="metadata" :src="audio"></audio>
     </div>
 </template>
 
@@ -21,7 +21,14 @@ export default {
     },
     methods: {
         playTrack(e) {
-            const target = e.currentTarget;
+            const currentTarget = e.currentTarget;
+            let target = e.target;
+
+            if (target.classList.contains('player')) {
+                return;
+            } else {
+                target = currentTarget;
+            }
             this.$emit('may-i-play', target);
         }
     }
@@ -48,6 +55,12 @@ export default {
         &:active {
             border: 1px solid $docBgColor;
             border-style: groove;
+        }
+
+        &.playing {
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
     }
 

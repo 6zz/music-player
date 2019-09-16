@@ -20,14 +20,17 @@ export default {
   },
   methods: {
     stopNPlay(el) {
-      // eslint-disable-next-line
-      console.log('app custom event handler', el);
       document.querySelectorAll('.playing').forEach(track => {
         track.classList.remove('playing');
         track.querySelector('.player').pause()
       })
       el.classList.add('playing')
-      el.querySelector('.player').play()
+      const audio = el.querySelector('.player')
+      audio.addEventListener('ended', () => {
+        el.classList.remove('playing')
+        this.stopNPlay(el.nextSibling)
+      })
+      audio.play()
     }
   }
 }
@@ -41,6 +44,7 @@ html {
 }
 
 #app {
+  position: relative;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
