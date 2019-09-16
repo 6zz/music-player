@@ -1,12 +1,13 @@
 <template>
   <div id="app">
-    <MusicTrack v-for="track in tracks" :key="track.id" v-bind="track" @may-i-play="stopNPlay"/>
+    <MusicTrack v-for="track in tracks" :key="track.id" v-bind="track" @may-i-play="playTrack"/>
   </div>
 </template>
 
 <script>
 import MusicTrack from './components/MusicTrack.vue'
 import tracks from './assets/tracks.js'
+import { inView } from './assets/utils'
 
 export default {
   name: 'app',
@@ -19,7 +20,8 @@ export default {
     }
   },
   methods: {
-    stopNPlay(el) {
+    playTrack(el) {
+      // only one track playing at a time
       document.querySelectorAll('.playing').forEach(track => {
         track.classList.remove('playing');
         track.querySelector('.player').pause()
@@ -28,14 +30,16 @@ export default {
         el.classList.add('playing')
         const audio = el.querySelector('.player')
         audio.play()
-        el.scrollIntoView({
-          block: 'start',
-          behavior: 'smooth'
-        })
+        if (!inView(el)) {
+          el.scrollIntoView({
+            block: 'end',
+            behavior: 'smooth'
+          })
+        }
       }
     }
   }
-}
+} 
 </script>
 
 <style lang="scss">
@@ -43,6 +47,7 @@ export default {
 
 html {
   background-color: $docBgColor;
+  min-width: 360px;
 }
 
 #app {

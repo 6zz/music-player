@@ -1,5 +1,5 @@
 <template>
-    <div class="track" @click="playTrack">
+    <div class="track" @click="chooseTrackForPlay">
         <div class="name">{{name}}</div>
         <div class="art" :style="artStyle"></div>
         <audio 
@@ -26,7 +26,7 @@ export default {
         }
     },
     methods: {
-        playTrack(e) {
+        chooseTrackForPlay(e) {
             const currentTarget = e.currentTarget;
             let target = e.target;
 
