@@ -7,7 +7,7 @@
 <script>
 import MusicTrack from './components/MusicTrack.vue'
 import tracks from './assets/tracks.js'
-import { inView } from './assets/utils'
+import { verticallyPartialInView } from './assets/utils'
 
 export default {
   name: 'app',
@@ -16,8 +16,12 @@ export default {
   },
   data() {
     return {
-      tracks
+      tracks,
+      raf: undefined
     }
+  },
+  beforeMount() {
+    document.addEventListener('scroll', this.handleScroll)
   },
   methods: {
     playTrack(el) {
@@ -31,10 +35,21 @@ export default {
         el.classList.add('playing')
         const audio = el.querySelector('.player')
         audio.play()
-        if (!inView(el)) {
-          el.classList.add('force-in-view');
+        if (verticallyPartialInView(el)) {
+          el.classList.add('force-in-view')
         }
       }
+    },
+    handleScroll() {
+      if (this.raf) {
+        window.cancelAnimationFrame(this.raf)
+      }
+      this.raf = window.requestAnimationFrame(() => {
+        const track = document.querySelector('.playing')
+        if (track && verticallyPartialInView(track)) {
+          track.classList.add('force-in-view')
+        }
+      })
     }
   }
 } 

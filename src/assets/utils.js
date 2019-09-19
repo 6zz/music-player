@@ -1,17 +1,15 @@
-function inView(el) {
+function verticallyPartialInView(el) {
     var top = el.offsetTop;
-    var left = el.offsetLeft;
-    var width = el.offsetWidth;
-    var height = el.offsetHeight;
+    var bottom = top + el.offsetHeight;
   
     return (
-      top >= window.pageYOffset &&
-      left >= window.pageXOffset &&
-      (top + height) <= (window.pageYOffset + window.innerHeight) &&
-      (left + width) <= (window.pageXOffset + window.innerWidth)
+      top < window.pageYOffset ||
+      bottom < window.pageYOffset ||
+      top > (window.pageYOffset + window.innerHeight) ||
+      bottom > (window.pageYOffset + window.innerHeight)
     );
 }
 
 export {
-    inView
+  verticallyPartialInView
 }
