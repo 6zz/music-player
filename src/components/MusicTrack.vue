@@ -66,7 +66,7 @@ $shadow: #888;
         }
 
         &.playing {
-            background-color: rgba(21, 21, 43, 0.9);
+            background-color: rgba(21, 21, 43);
             color: white;
             top: 0;
             z-index: 1;
