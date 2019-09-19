@@ -55,9 +55,14 @@ $shadow: #888;
         border: 1px solid #fff;
         box-shadow: 5px 5px $shadow;
         box-sizing: border-box;
+        top: 0;
+        transition: top 300ms;
 
         &:hover {
             cursor: pointer;
+            top: -5px;
+            z-index: 1;
+            box-shadow: 5px 10px 10px rgba($shadow, 0.8), -5px -5px 5px rgba($shadow, 0.8)
         }
 
         &:active {
@@ -69,7 +74,7 @@ $shadow: #888;
             background-color: rgba(21, 21, 43);
             color: white;
             top: 0;
-            z-index: 1;
+            z-index: 2;
             transition: transform 600ms;
 
             &.force-in-view {
