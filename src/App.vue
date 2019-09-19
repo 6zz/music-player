@@ -23,7 +23,8 @@ export default {
     playTrack(el) {
       // only one track playing at a time
       document.querySelectorAll('.playing').forEach(track => {
-        track.classList.remove('playing');
+        track.classList.remove('playing')
+        track.classList.remove('force-in-view')
         track.querySelector('.player').pause()
       })
       if (el) {
@@ -31,10 +32,7 @@ export default {
         const audio = el.querySelector('.player')
         audio.play()
         if (!inView(el)) {
-          el.scrollIntoView({
-            block: 'end',
-            behavior: 'smooth'
-          })
+          el.classList.add('force-in-view');
         }
       }
     }

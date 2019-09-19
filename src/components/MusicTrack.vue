@@ -1,5 +1,5 @@
 <template>
-    <div class="track" @click="chooseTrackForPlay">
+    <div class="track" @click="playIt">
         <div class="name">{{name}}</div>
         <div class="art" :style="artStyle"></div>
         <audio 
@@ -26,7 +26,7 @@ export default {
         }
     },
     methods: {
-        chooseTrackForPlay(e) {
+        playIt(e) {
             const currentTarget = e.currentTarget;
             let target = e.target;
 
@@ -43,6 +43,8 @@ export default {
 
 <style lang="scss">
 @import '../assets/constants';
+$shadow: #888;
+
     .track {
         position: relative;
         display: flex;
@@ -51,7 +53,7 @@ export default {
         margin-bottom: 1px;
         background-color: #fff;
         border: 1px solid #fff;
-        box-shadow: 5px 5px #888;
+        box-shadow: 5px 5px $shadow;
         box-sizing: border-box;
 
         &:hover {
@@ -66,9 +68,19 @@ export default {
         &.playing {
             background-color: rgba(21, 21, 43, 0.9);
             color: white;
-            position: sticky;
             top: 0;
             z-index: 1;
+            transition: transform 600ms;
+
+            &.force-in-view {
+                position: fixed;
+                width: 100%;
+                top: unset;
+                bottom: 100%;
+                overflow: hidden;
+                transform: translateY(100%);
+                box-shadow: 1px 10px 10px rgba($shadow, 0.8);
+            }
         }
     }
 
@@ -82,8 +94,8 @@ export default {
 
     .player {
         position: absolute;
-        bottom: 0;
         left: 0;
+        bottom: 0;
         width: 100%;
         height: 15px;
         display: none;
