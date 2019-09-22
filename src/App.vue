@@ -1,58 +1,46 @@
 <template>
-  <div id="app">
-    <MusicTrack v-for="track in tracks" :key="track.id" v-bind="track" @may-i-play="playTrack"/>
+  <div id="main">
+    <PlayerPlate 
+      v-bind="activeTrack" 
+      @play-previous="setActiveTrack(-1)"
+      @play-next="setActiveTrack(1)"
+    />
+    <!-- <MusicTrack v-for="track in tracks" :key="track.id" v-bind="track" @may-i-play="playTrack"/> -->
   </div>
 </template>
 
 <script>
-import MusicTrack from './components/MusicTrack.vue'
+import PlayerPlate from './components/PlayerPlate.vue'
 import tracks from './assets/tracks.js'
-import { verticallyPartialInView } from './assets/utils'
 
 export default {
   name: 'app',
   components: {
-    MusicTrack
+    PlayerPlate
   },
   data() {
     return {
       tracks,
-      raf: undefined
+      activeTrackId: 0,
     }
   },
-  beforeMount() {
-    document.addEventListener('scroll', this.handleScroll)
+  computed: {
+    activeTrack() {
+      return this.tracks[this.activeTrackId];
+    }
   },
   methods: {
-    playTrack(el) {
-      // only one track playing at a time
-      document.querySelectorAll('.playing').forEach(track => {
-        track.classList.remove('playing')
-        track.classList.remove('force-in-view')
-        track.querySelector('.player').pause()
-      })
-      if (el) {
-        el.classList.add('playing')
-        const audio = el.querySelector('.player')
-        audio.play()
-        if (verticallyPartialInView(el)) {
-          el.classList.add('force-in-view')
-        }
+    setActiveTrack(delta) {
+      this.activeTrackId += delta;
+
+      if (this.activeTrackId < 0) {
+        this.activeTrackId = this.tracks.length - 1;
+      } else if (this.activeTrackId === this.tracks.length) {
+        this.activeTrackId = 0;
       }
-    },
-    handleScroll() {
-      if (this.raf) {
-        window.cancelAnimationFrame(this.raf)
-      }
-      this.raf = window.requestAnimationFrame(() => {
-        const track = document.querySelector('.playing')
-        if (track && verticallyPartialInView(track)) {
-          track.classList.add('force-in-view')
-        }
-      })
     }
   }
-} 
+}
 </script>
 
 <style lang="scss">
@@ -61,6 +49,12 @@ export default {
 html {
   background-color: $docBgColor;
   min-width: 360px;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+body {
+  margin: 0;
 }
 
 #app {
