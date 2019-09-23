@@ -1,35 +1,35 @@
 <template>
-    <div class="player-plate" :class="{playing: isPlaying}">
+    <div class="player-plate" :class="playerClasses">
         <div class="art" :style="{backgroundImage: `url(${art})`}"></div>
-        <audio :src="audio" preload="meta" ref="audioEl" @ended="$emit('play-next')"/>
-        <div class="info">
+        <audio 
+            :src="audio" 
+            preload="meta" 
+            ref="audioEl" 
+            @ended="$emit('play-next')" 
+            @canplay="playAudio"
+        />
+        <div class="info" @click.capture="controlClicked">
             <div class="title">{{ name }}</div>
-            <div class="controls" @click.capture="controlClicked">
-                <div class="btn-control">
-                    <button class="btn">
-                        <i class="fas fa-fast-backward" data-button="fastBack"/>
-                    </button>
-                </div>
-                <div class="btn-control">
-                    <button class="btn">
-                        <i class="fas fa-play" data-button="play"></i>
-                        <i class="fas fa-pause" data-button="pause"></i>
-                    </button>
-                </div>
-                <div class="btn-control">
-                    <button class="btn"><i class="fas fa-fast-forward" data-button="fastForward"/></button>
-                </div>
-            </div>
+            <AudioControls  />
+            <AuxButtons />
         </div>
     </div>
 </template>
 
 <script>
+import AudioControls from './AudioControls'
+import AuxButtons from './AuxButtons'
+
 export default {
     name: 'PlayerPlate',
+    components: {
+        AudioControls,
+        AuxButtons
+    },
     data() {
         return {
-            isPlaying: false
+            isPlaying: false,
+            ref: undefined
         }
     },
     props: {
@@ -46,11 +46,21 @@ export default {
             default: ''
         }
     },
+    mounted() {
+        this.resized();
+        window.addEventListener('resize', this.resized);
+    },
     updated() {
         if (this.isPlaying) {
             const audioEl = this.$refs.audioEl;
             audioEl.load();
-            audioEl.play();
+        }
+    },
+    computed: {
+        playerClasses() {
+            return {
+                playing: this.isPlaying
+            }
         }
     },
     methods: {
@@ -62,24 +72,37 @@ export default {
             const controls = {
                 play() {
                     player.isPlaying = true;
-                    audioEl.play();
                 },
                 pause() {
-                    player.isPlaying = false;
                     audioEl.pause();
+                    player.isPlaying = false;
                 },
                 fastBack() {
-                    audioEl.pause();
                     player.$emit('play-previous');
                 },
                 fastForward() {
-                    audioEl.pause();
                     player.$emit('play-next');
+                },
+                playList() {
+                    player.$emit('toggle-play-list');
                 }
             }
-
             const handler = controls[target.dataset.button];
             handler && handler()
+        },
+        playAudio($event) {
+            if(this.isPlaying) {
+                $event.target.play();
+            }
+        },
+        setWidth() {
+            this.$el.style.width = `${this.$el.parentElement.offsetWidth}px`;
+        },
+        resized() {
+            if (this.raf) {
+                cancelAnimationFrame(this.raf);
+            }
+            this.raf = requestAnimationFrame(this.setWidth);
         }
     }
 }
@@ -87,6 +110,10 @@ export default {
 
 <style lang="scss" scoped>
 .player-plate {
+    position: fixed;
+    top: 0;
+    z-index: 2;
+    width: 100%;
     display: grid;
     grid-template-rows: repeat(5, 120px);
     grid-template-areas: 
@@ -101,34 +128,27 @@ export default {
     grid-area: art;
     background: #f2f2f2 no-repeat center/contain
 }
+
 .info {
     grid-area: info;
 
     display: grid;
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
     background-color: #f2f2f2;
     color: #000;
     padding: 10px 30px;
 }
 
 .title {
-    grid-row-end: 2;
-}
-
-.controls {
-    grid-row-end: 3;
-
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-}
-
-.btn-control {
+    grid-row: 1 / 2;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: larger;
 }
+</style>
 
+<style lang="scss">
 .btn {
     position: relative;
     border: none;
@@ -142,25 +162,6 @@ export default {
 
     &:active {
         color: lighten(#000, 60)
-    }
-
-    .fa-play,
-    .fa-pause {
-        display: inline-block;
-    }
-
-    .fa-pause {
-        display: none;
-    }
-}
-
-.playing {
-    .fa-pause {
-        display: inline-block;
-    }
-
-    .fa-play {
-        display: none;
     }
 }
 </style>
