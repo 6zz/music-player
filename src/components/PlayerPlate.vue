@@ -7,9 +7,15 @@
             ref="audioEl" 
             @ended="$emit('play-next')" 
             @canplay="playAudio"
+            @timeupdate="updateAudioPosition"
         />
         <div class="info" @click.capture="controlClicked">
-            <div class="title">{{ name }}</div>
+            <div class="track-meta">
+                <div class="duration">
+                    <div ref="currentTimeEl" class="currentTime" />
+                </div>
+                <div class="title">{{ name }}</div>
+            </div>
             <AudioControls  />
             <AuxButtons />
         </div>
@@ -47,7 +53,7 @@ export default {
         }
     },
     mounted() {
-        this.resized();
+        this.setWidth();
         window.addEventListener('resize', this.resized);
     },
     updated() {
@@ -96,13 +102,24 @@ export default {
             }
         },
         setWidth() {
-            this.$el.style.width = `${this.$el.parentElement.offsetWidth}px`;
+            this.$el.style.width = `${this.$el.parentNode.offsetWidth}px`;
         },
         resized() {
             if (this.raf) {
                 cancelAnimationFrame(this.raf);
             }
-            this.raf = requestAnimationFrame(this.setWidth);
+            this.raf = requestAnimationFrame(this.setWidth.bind(this));
+        },
+        updateAudioPosition() {
+            const currentTimeEl = this.$refs.currentTimeEl;
+            const audioEl = this.$refs.audioEl;
+            const duration = audioEl.duration;
+            const currentTime = audioEl.currentTime;
+            console.log('duration', audioEl.duration);
+
+            if (duration !== NaN) {
+                currentTimeEl.style.width = `${currentTime / duration * 100}%`;
+            }
         }
     }
 }
@@ -139,12 +156,24 @@ export default {
     padding: 10px 30px;
 }
 
-.title {
+.track-meta {
     grid-row: 1 / 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-auto-rows: auto;
     font-size: larger;
+}
+
+.duration {
+    position: relative;
+    width: 80%;
+    margin: 0 auto;
+    border-top: 2px solid lighten(#000, 70);
+}
+
+.currentTime {
+    position: absolute;
+    top: -2px;
+    border-top: 2px solid #000;
 }
 </style>
 
