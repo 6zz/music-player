@@ -1,13 +1,13 @@
 <template>
   <div id="main">
-    <PlayerPlate 
-      v-bind="activeTrack" 
+    <PlayerPlate
+      v-bind="activeTrack"
       @play-previous="setActiveTrack(activeTrackId - 1)"
       @play-next="setActiveTrack(activeTrackId + 1)"
       @toggle-play-list="openList = !openList"
     />
-    <PlayList 
-      :tracks="tracks" 
+    <PlayList
+      :tracks="tracks"
       v-show="openList"
       @click.native.capture="playTrack"
     />
@@ -34,7 +34,6 @@ export default {
   },
   computed: {
     activeTrack() {
-      console.log('active track id', this.activeTrackId);
       return this.tracks[this.activeTrackId];
     }
   },

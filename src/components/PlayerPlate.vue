@@ -1,22 +1,24 @@
 <template>
-    <div class="player-plate" :class="playerClasses">
+    <div class="player-plate" :class="playerClasses" :style="{width: playerWidth}">
         <div class="art" :style="{backgroundImage: `url(${art})`}"></div>
-        <audio 
-            :src="audio" 
-            preload="meta" 
-            ref="audioEl" 
-            @ended="$emit('play-next')" 
-            @canplay="playAudio"
+        <audio
+            :src="audio"
+            preload="meta"
+            ref="audioEl"
+            @play="isPlaying=true"
+            @pause="whenPaused"
+            @ended="playNext"
+            @canplay="canPlay"
             @timeupdate="updateAudioPosition"
         />
         <div class="info" @click.capture="controlClicked">
             <div class="track-meta">
                 <div class="duration">
-                    <div ref="currentTimeEl" class="currentTime" />
+                    <div class="currentTime" :style="{width: audioTimePercent}"/>
                 </div>
                 <div class="title">{{ name }}</div>
             </div>
-            <AudioControls  />
+            <AudioControls />
             <AuxButtons />
         </div>
     </div>
@@ -35,7 +37,10 @@ export default {
     data() {
         return {
             isPlaying: false,
-            ref: undefined
+            ref: undefined,
+            audioTimePercent: 0,
+            playerWidth: 0,
+            needToLoadAudio: false
         }
     },
     props: {
@@ -53,13 +58,16 @@ export default {
         }
     },
     mounted() {
+        this.$refs.audioEl.load();
         this.setWidth();
         window.addEventListener('resize', this.resized);
     },
+    beforeUpdate() {
+        this.needToLoadAudio = (this.$refs.audioEl.currentSrc !== this.audio);
+    },
     updated() {
-        if (this.isPlaying) {
-            const audioEl = this.$refs.audioEl;
-            audioEl.load();
+        if (this.needToLoadAudio) {
+            this.$refs.audioEl.load();
         }
     },
     computed: {
@@ -77,16 +85,17 @@ export default {
 
             const controls = {
                 play() {
-                    player.isPlaying = true;
+                    audioEl.play();
                 },
                 pause() {
                     audioEl.pause();
-                    player.isPlaying = false;
                 },
                 fastBack() {
+                    player.audioTimePercent = 0;
                     player.$emit('play-previous');
                 },
                 fastForward() {
+                    player.audioTimePercent = 0;
                     player.$emit('play-next');
                 },
                 playList() {
@@ -96,13 +105,22 @@ export default {
             const handler = controls[target.dataset.button];
             handler && handler()
         },
-        playAudio($event) {
+        canPlay($event) {
             if(this.isPlaying) {
                 $event.target.play();
             }
         },
+        whenPaused() {
+            const audioEl = this.$refs.audioEl;
+            if (!audioEl.ended) {
+                this.isPlaying = false;
+            }
+        },
+        playNext() {
+            this.$emit('play-next');
+        },
         setWidth() {
-            this.$el.style.width = `${this.$el.parentNode.offsetWidth}px`;
+            this.playerWidth = `${this.$el.parentNode.offsetWidth}px`;
         },
         resized() {
             if (this.raf) {
@@ -111,14 +129,15 @@ export default {
             this.raf = requestAnimationFrame(this.setWidth.bind(this));
         },
         updateAudioPosition() {
-            const currentTimeEl = this.$refs.currentTimeEl;
             const audioEl = this.$refs.audioEl;
-            const duration = audioEl.duration;
+            if (!audioEl) {
+                return;
+            }
             const currentTime = audioEl.currentTime;
-            console.log('duration', audioEl.duration);
+            const duration = audioEl.duration;
 
-            if (duration !== NaN) {
-                currentTimeEl.style.width = `${currentTime / duration * 100}%`;
+            if (!isNaN(duration)) {
+                this.audioTimePercent = `${currentTime / duration * 100}%`;
             }
         }
     }
@@ -133,7 +152,7 @@ export default {
     width: 100%;
     display: grid;
     grid-template-rows: repeat(5, 120px);
-    grid-template-areas: 
+    grid-template-areas:
         "art"
         "art"
         "art"
@@ -174,6 +193,7 @@ export default {
     position: absolute;
     top: -2px;
     border-top: 2px solid #000;
+    transition: width 250ms;
 }
 </style>
 
