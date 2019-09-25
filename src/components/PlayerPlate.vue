@@ -19,7 +19,7 @@
                 <div class="title">{{ name }}</div>
             </div>
             <AudioControls />
-            <AuxButtons />
+            <AuxButtons :volume="volume" @set-volume="setPlayerVolume" />
         </div>
     </div>
 </template>
@@ -40,7 +40,8 @@ export default {
             ref: undefined,
             audioTimePercent: 0,
             playerWidth: 0,
-            needToLoadAudio: false
+            needToLoadAudio: false,
+            volume: 0.25
         }
     },
     props: {
@@ -58,6 +59,7 @@ export default {
         }
     },
     mounted() {
+        this.$refs.audioEl.volume = this.volume;
         this.$refs.audioEl.load();
         this.setWidth();
         window.addEventListener('resize', this.resized);
@@ -139,6 +141,9 @@ export default {
             if (!isNaN(duration)) {
                 this.audioTimePercent = `${currentTime / duration * 100}%`;
             }
+        },
+        setPlayerVolume(volume) {
+            this.$refs.audioEl.volume = volume;
         }
     }
 }
@@ -172,7 +177,7 @@ export default {
     grid-template-rows: repeat(3, 1fr);
     background-color: #f2f2f2;
     color: #000;
-    padding: 10px 30px;
+    padding: 10px 0;
 }
 
 .track-meta {
@@ -184,7 +189,7 @@ export default {
 
 .duration {
     position: relative;
-    width: 80%;
+    width: 100%;
     margin: 0 auto;
     border-top: 2px solid lighten(#000, 70);
 }
