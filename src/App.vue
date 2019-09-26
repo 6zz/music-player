@@ -9,7 +9,7 @@
     <PlayList
       :tracks="tracks"
       v-show="openList"
-      @click.native.capture="playTrack"
+      @play-track="playTrack"
     />
   </div>
 </template>
@@ -39,19 +39,21 @@ export default {
   },
   methods: {
     setActiveTrack(id) {
+      console.log('setActiveTrack', id);
       const numberTracks = this.tracks.length;
       if (id < 0) {
         id = numberTracks - 1;
       } else if (id === numberTracks) {
         id = 0;
       }
-      this.activeTrackId = id;
+      this.activeTrackId = Number(id);
     },
     playTrack($event) {
-      const target = $event.target;
+      const target = $event.currentTarget;
       const id = target.dataset.track;
+      console.log('clicked', target);
       if (id) {
-        this.setActiveTrack(id);
+        this.setActiveTrack(Number(id));
       }
     }
   }

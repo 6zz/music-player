@@ -1,5 +1,5 @@
 <template>
-    <div class="track" :data-track="id">
+    <div class="track" :data-track="id" @click.capture="$parent.$emit('play-track', $event)">
         <div class="name">{{name}}</div>
         <div class="art" :style="artStyle"></div>
     </div>

@@ -1,6 +1,10 @@
 <template>    
     <ul class="play-list">
-      <MusicTrack v-for="track in tracks" :key="track.id" v-bind="track"/>
+      <MusicTrack 
+        v-for="track in tracks" 
+        :key="track.id" 
+        v-bind="track"
+    />
     </ul>
 </template>
 
