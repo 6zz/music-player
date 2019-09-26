@@ -39,7 +39,6 @@ export default {
   },
   methods: {
     setActiveTrack(id) {
-      console.log('setActiveTrack', id);
       const numberTracks = this.tracks.length;
       if (id < 0) {
         id = numberTracks - 1;
@@ -51,7 +50,6 @@ export default {
     playTrack($event) {
       const target = $event.currentTarget;
       const id = target.dataset.track;
-      console.log('clicked', target);
       if (id) {
         this.setActiveTrack(Number(id));
       }

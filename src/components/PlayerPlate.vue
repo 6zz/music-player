@@ -73,7 +73,6 @@ export default {
         }
     },
     beforeDestroy() {
-        console.log('refs', this.$refs);
         this.$refs.audioEl.pause();
     },
     computed: {
@@ -126,7 +125,6 @@ export default {
             this.$emit('play-next');
         },
         setWidth() {
-            console.log('set width of ', this.$el);
             this.playerWidth = `${this.$el.parentNode.offsetWidth}px`;
         },
         resized() {
