@@ -39,13 +39,13 @@ export default {
   },
   methods: {
     setActiveTrack(id) {
-      this.activeTrackId = id;
-
-      if (this.activeTrackId < 0) {
-        this.activeTrackId = this.tracks.length - 1;
-      } else if (this.activeTrackId === this.tracks.length) {
-        this.activeTrackId = 0;
+      const numberTracks = this.tracks.length;
+      if (id < 0) {
+        id = numberTracks - 1;
+      } else if (id === numberTracks) {
+        id = 0;
       }
+      this.activeTrackId = id;
     },
     playTrack($event) {
       const target = $event.target;
