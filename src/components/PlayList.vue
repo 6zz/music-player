@@ -1,5 +1,5 @@
 <template>    
-    <ul class="play-list">
+    <ul class="play-list" :class="classesPlaylist">
       <MusicTrack 
         v-for="track in tracks" 
         :key="track.id" 
@@ -22,6 +22,17 @@ export default {
             default() {
                 return [];
             }
+        },
+        openList: {
+            type: Boolean,
+            default: false
+        }
+    },
+    computed: {
+        classesPlaylist() {
+            return {
+                'play-list-open': this.openList
+            }
         }
     }
 }
@@ -30,14 +41,14 @@ export default {
 <style lang="scss" scoped>
 .play-list {
     margin-top: 600px;
-    // min-height: 0;
-    // height: 0;
+    max-height: 0;
+    min-height: 0;
     overflow: hidden;
-    transition: min-height 250ms;
+    transition: min-height 0.3s ease-in-out, max-height .3s ease .3s;
 
-    .play-list-open & {
-        height: auto;
-        // min-height: auto;
+    &-open {
+        min-height: 500px;
+        max-height: 99999px;
     }
 }
 </style>

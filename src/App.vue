@@ -8,7 +8,7 @@
     />
     <PlayList
       :tracks="tracks"
-      v-show="openList"
+      :openList="openList"
       @play-track="playTrack"
     />
   </div>

@@ -34,14 +34,12 @@ $shadow: #888;
     background-color: #fff;
     border: 1px solid #fff;
     box-sizing: border-box;
-    top: 0;
-    transition: top 250ms;
+    transition: box-shadow 250ms;
 
     &:hover {
         cursor: pointer;
-        top: -1px;
         z-index: 1;
-        box-shadow: 5px 10px 10px rgba($shadow, 0.8), -5px -5px 5px rgba($shadow, 0.8)
+        box-shadow: 0 1px 1px rgba($shadow, 0.8), 0 -1px 1px rgba($shadow, 0.8)
     }
 
     &:active {
