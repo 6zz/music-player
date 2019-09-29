@@ -44,7 +44,7 @@ export default {
     max-height: 0;
     min-height: 0;
     overflow: hidden;
-    transition: min-height 0.3s ease-in-out, max-height .3s ease .3s;
+    transition: min-height 0.3s ease-in-out, max-height .3s ease-out .3s;
 
     &-open {
         min-height: 500px;
