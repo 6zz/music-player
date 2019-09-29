@@ -1,6 +1,8 @@
 <template>
     <div class="duration">
         <input class="time-slider" type="range" min=0.0 max=100.0 :value="currentTimePercent"
+            ref="timeSlider"
+            :style="computedSliderStyle"
             @change="timeSeeked" />
     </div>
 </template>
@@ -18,23 +20,32 @@ export default {
             default: 0.0
         }
     },
+    mounted() {
+        this.containerWidth = this.$refs.timeSlider.clientWidth;
+    },
     updated() {
-        this.seekedTime = null;
+        this.containerWidth = this.$refs.timeSlider.clientWidth;
     },
     data() {
         return {
-            seekedTime: null
+            containerWidth: null
         }
     },
     computed: {
         currentTimePercent() {
-            return this.seekedTime || this.currentTime / this.duration * 100;
+            return this.currentTime / this.duration * 100;
+        },
+        computedSliderStyle() {            
+            let x = Math.floor(this.currentTime / this.duration * this.containerWidth);
+            return {
+                'box-shadow': `inset ${x}px 0 #000`
+            }
         }
     },
     methods: {
         timeSeeked($event) {
-            this.seekedTime = $event.target.value;
-            this.$emit('seek', this.seekedTime / 100 * this.duration);
+            const seekedTime = $event.target.value;
+            this.$emit('seek', seekedTime / 100 * this.duration);
         }
     }
 }
