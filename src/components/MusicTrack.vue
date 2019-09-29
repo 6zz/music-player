@@ -32,14 +32,13 @@ $shadow: #888;
     padding: 10px;
     margin-bottom: 1px;
     background-color: #fff;
-    border: 1px solid #fff;
+    // border: 1px solid #fff;
     box-sizing: border-box;
     transition: box-shadow 250ms;
 
     &:hover {
         cursor: pointer;
-        z-index: 1;
-        box-shadow: 0 1px 1px rgba($shadow, 0.8), 0 -1px 1px rgba($shadow, 0.8)
+        box-shadow: inset 1px 1px 1em rgba($shadow, 0.8);
     }
 
     &:active {
