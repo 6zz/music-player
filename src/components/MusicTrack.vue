@@ -73,24 +73,6 @@ $shadow: #888;
     }
 }
 
-.player {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 15px;
-    display: none;
-
-    .playing & {
-        display: block;
-        background: #f2f2f2;
-    }
-
-    &:focus {
-        outline: none;
-    }
-}
-
 .art {
     flex: 0 0 50px;
     background: #f1f1f1 no-repeat center/cover;
