@@ -9,13 +9,15 @@
             @pause="whenPaused"
             @ended="playNext"
             @canplay="canPlay"
-            @timeupdate="updateAudioPosition"
+            @timeupdate="audioTimeChanged"
         />
         <div class="info" @click.capture="controlClicked">
             <div class="track-meta">
-                <div class="duration">
-                    <div class="currentTime" :style="{width: audioTimePercent}"/>
-                </div>
+                <AudioTime 
+                    :currentTime="currentTime" 
+                    :duration="trackDuration"
+                    @seek="setSeekTime"
+                />
                 <div class="title">{{ name }}</div>
             </div>
             <AudioControls />
@@ -27,20 +29,23 @@
 <script>
 import AudioControls from './AudioControls'
 import AuxButtons from './AuxButtons'
+import AudioTime from './AudioTime'
 
 export default {
     name: 'PlayerPlate',
     components: {
         AudioControls,
-        AuxButtons
+        AuxButtons,
+        AudioTime
     },
     data() {
         return {
             isPlaying: false,
-            ref: undefined,
-            audioTimePercent: 0,
+            raf: undefined,
             playerWidth: 0,
             needToLoadAudio: false,
+            duration: NaN,
+            currentTime: 0.0,
             volume: 0.25
         }
     },
@@ -59,8 +64,9 @@ export default {
         }
     },
     mounted() {
-        this.$refs.audioEl.volume = this.volume;
-        this.$refs.audioEl.load();
+        const audioEl = this.$refs.audioEl;
+        audioEl.volume = this.volume;
+        audioEl.load();
         this.setWidth();
         window.addEventListener('resize', this.resized);
     },
@@ -80,6 +86,10 @@ export default {
             return {
                 playing: this.isPlaying
             }
+        },
+        trackDuration() {
+            // all sample tracks are about 30.1 long
+            return !isNaN(this.duration) ? this.duration : 30.1;
         }
     },
     methods: {
@@ -111,13 +121,15 @@ export default {
             handler && handler()
         },
         canPlay($event) {
+            const audioEl = $event.target;
+            this.duration = audioEl.duration;
             if(this.isPlaying) {
-                $event.target.play();
+                audioEl.play();
             }
         },
         whenPaused() {
             const audioEl = this.$refs.audioEl;
-            if (!audioEl.ended) {
+            if (audioEl && !audioEl.ended) {
                 this.isPlaying = false;
             }
         },
@@ -133,20 +145,16 @@ export default {
             }
             this.raf = requestAnimationFrame(this.setWidth.bind(this));
         },
-        updateAudioPosition() {
-            const audioEl = this.$refs.audioEl;
-            if (!audioEl) {
-                return;
-            }
-            const currentTime = audioEl.currentTime;
-            const duration = audioEl.duration;
-
-            if (!isNaN(duration)) {
-                this.audioTimePercent = `${currentTime / duration * 100}%`;
-            }
-        },
         setPlayerVolume(volume) {
             this.$refs.audioEl.volume = volume;
+        },
+        audioTimeChanged($event) {
+            const audioEl = $event.target;
+            this.duration = audioEl.duration;
+            this.currentTime = audioEl.currentTime;
+        },
+        setSeekTime($time) {
+            this.$refs.audioEl.currentTime=$time;
         }
     }
 }
@@ -190,19 +198,6 @@ export default {
     font-size: larger;
 }
 
-.duration {
-    position: relative;
-    width: 100%;
-    margin: 0 auto;
-    border-top: 2px solid lighten(#000, 70);
-}
-
-.currentTime {
-    position: absolute;
-    top: -2px;
-    border-top: 2px solid #000;
-    transition: width 250ms;
-}
 </style>
 
 <style lang="scss">
