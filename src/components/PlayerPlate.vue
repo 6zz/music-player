@@ -188,7 +188,6 @@ export default {
     grid-template-rows: repeat(3, 1fr);
     background-color: #f2f2f2;
     color: #000;
-    padding: 10px 0;
 }
 
 .track-meta {

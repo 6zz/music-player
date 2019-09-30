@@ -32,44 +32,18 @@ $shadow: #888;
     padding: 10px;
     margin-bottom: 1px;
     background-color: #fff;
-    // border: 1px solid #fff;
     box-sizing: border-box;
-    transition: box-shadow 250ms;
+    transition: all 250ms;
 
     &:hover {
         cursor: pointer;
-        box-shadow: inset 1px 1px 1em rgba($shadow, 0.8);
+        font-weight: bold;
+        box-shadow: inset 1px 1px 2px rgba($shadow, 0.8);
     }
 
     &:active {
         border: 1px solid $docBgColor;
         border-style: groove;
-    }
-
-    &.playing {
-        background-color: rgba(21, 21, 43);
-        color: white;
-        top: 0;
-        z-index: 2;
-        transition: transform 600ms;
-
-        &.force-in-view {
-            position: fixed;
-            width: 100%;
-            top: unset;
-            bottom: 100%;
-            overflow: hidden;
-            transform: translateY(100%);
-            box-shadow: 1px 10px 10px rgba($shadow, 0.8);
-        }
-    }
-}
-
-.name {
-    text-align: left;
-
-    .playing & {
-        font-weight: bold;
     }
 }
 
